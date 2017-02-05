@@ -1,32 +1,32 @@
-CREATE DATABASE price_o_meter;
-
-CREATE TABLE IF NOT EXISTS price_o_meter.products (
-	id INTEGER PRIMARY KEY DEFAULT nextval('serial'),
+CREATE TABLE IF NOT EXISTS products (
+	id SERIAL PRIMARY KEY,
 	name VARCHAR(200) NOT NULL,
 	category VARCHAR(50) NOT NULL,
-	date_added DATE NOT NULL,
-	date_updated DATE,
-	date_removed DATE,
+	date_added TIMESTAMP NOT NULL,
+	date_updated TIMESTAMP,
+	date_removed TIMESTAMP,
 	attributes JSONB,
-	CONSTRAINT products UNIQUE(name, attributes)
+	CONSTRAINT uniq_name_attr UNIQUE(name, attributes)
 );
 
-CREATE TABLE IF NOT EXISTS price_o_meter.product_locations (
-	id INTEGER PRIMARY KEY DEFAULT nextval('serial'),
+CREATE TABLE IF NOT EXISTS product_locations (
+	id SERIAL PRIMARY KEY,
 	product_id INTEGER NOT NULL,
+	date_added TIMESTAMP NOT NULL,
+	date_removed TIMESTAMP,
 	site_name VARCHAR(300),
 	site_url VARCHAR(1000),
-	FOREIGN KEY product_id REFERENCES priceo_o_meter.products id
+	CONSTRAINT fk_product_id FOREIGN KEY (product_id) REFERENCES products (id)
 );
 
-CREATE TABLE IF NOT EXISTS price_o_meter.prices (
-	id INTEGER PRIMARY KEY DEFAULT nextval('serial'),
+CREATE TABLE IF NOT EXISTS prices (
+	id SERIAL PRIMARY KEY,
 	product_id INTEGER NOT NULL,
 	product_location_id INTEGER NOT NULL,
 	price INTEGER NOT NULL,
 	price_currecy VARCHAR(30) NOT NULL,
-	date_added DATE NOT NULL,
-	CONSTRAINT products UNIQUE(product_id, date_added)
-	FOREIGN KEY fk_product_id REFERENCES priceo_o_meter.products id
-	FOREIGN KEY fk_product_location_id REFERENCES priceo_o_meter.product_locations id
+	date_added TIMESTAMP NOT NULL,
+	CONSTRAINT uniq_prices UNIQUE(product_id, date_added),
+	CONSTRAINT fk_producti_id FOREIGN KEY (product_id) REFERENCES products (id),
+	CONSTRAINT fk_producti_location_id FOREIGN KEY (product_location_id) REFERENCES product_locations (id)
 );
