@@ -1,48 +1,40 @@
-<html>
+<html ng-app="PriceOMeterApp">
 <head>
-<title>Price-O-Meter web application</title>
+	<meta charset="utf-8" />
+	<title>Price-O-Meter web application</title>
 
-<link rel="stylesheet" href="/css/bootstrap.min.css">
-<link rel="stylesheet" href="/css/bootstrap-theme.min.css">
+        <script>document.write('<base href="' + document.location + '" />');</script>
 
+	<link rel="stylesheet" href="/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="/css/angular-material.min.css">
+        <link rel="stylesheet" href="/css/main.css">
 
 </head>
-<body>
+<body ng-controller="PriceOMeterController">
 
 <nav class="navbar navbar-default">
   <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
         <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>  <span class="icon-bar"></span> <span class="icon-bar"></span>
       </button>
       <a class="navbar-brand" href="#">Price-O-Meter</a>
     </div>
-
-    <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Product<span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <li><a href="#">List</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="#">Add</a></li>
-            <li><a href="#">Update</a></li>
-            <li><a href="#">Delete</a></li>
-          </ul>
-        </li>
+        <li><a href="#">Products</a></li>
         <li><a href="#">Discounts</a></li>
       </ul>
+<!--
       <form class="navbar-form navbar-left">
         <div class="form-group">
           <input type="text" class="form-control" placeholder="Search">
         </div>
         <button type="submit" class="btn btn-default">Submit</button>
       </form>
+-->
       <ul class="nav navbar-nav navbar-right">
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin<span class="caret"></span></a>
@@ -55,16 +47,71 @@
           </ul>
         </li>
       </ul>
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
+    </div>
+  </div>
 </nav>
 
+<div ng-cloak>
+  <md-content class="md-padding">
+    <md-nav-bar md-selected-nav-item="currentNavItem" nav-bar-aria-label="navigation links">
+      <md-nav-item md-nav-click="goto('productLST')" name="productLST">List</md-nav-item>
+      <md-nav-item md-nav-click="goto('productSHW')" name="productSHW">Show</md-nav-item>
+      <md-nav-item md-nav-click="goto('productADD')" name="productADD">Add</md-nav-item>
+      <md-nav-item md-nav-click="goto('productUPD')" name="productUPD">Update</md-nav-item>
+      <md-nav-item md-nav-click="goto('productDEL')" name="productDEL">Delete</md-nav-item>
+    </md-nav-bar>
+    <div class="ext-content">
+    <ng-if ng-if="currentNavItem == 'productLST'"><h3>List Products</h3>
+    <table class="table">
+           <tr>
+              <td>ID</td>
+              <td>Name</td>
+              <td>Category</td>
+              <td>Date Added</td>
+              <td>Date Updated</td>
+              <td>Date Removed</td>
+           </tr>
+           <tr ng-repeat="product in products | orderBy:'name'">
+                       <td>{{product.id}}</td>
+                       <td>{{product.name}}</td>
+                       <td>{{product.category}}</td>
+                       <td>{{product.date_added}}</td>
+                       <td>{{product.date_modified || 'Item not modified'}}</td>
+                       <td>{{product.date_removed || 'Item not removed'}}</td>
+           </tr>
+        </table>
+    </ng-if>
+    <ng-if ng-if="currentNavItem == 'productSHW'"><h3>Show Product</h3> 
+    </ng-if>
+    <ng-if ng-if="currentNavItem == 'productADD'"><h3>Add Product</h3> 
+    </ng-if>
+    <ng-if ng-if="currentNavItem == 'productUPD'"><h3>Update Product</h3> 
+    </ng-if>
+    <ng-if ng-if="currentNavItem == 'productDEL'"><h3>Delete Product</h3> 
+    </ng-if>
+
+    </div>
+
+  </md-content>
+</div>
+
+<!--
 Products - list of products, show, add, delete, update</br>
 Search - search products based on name</br>
 Display discounts<br>
+-->
 
-<script src="/js/jquery-3.1.1.min.js"></script>
-<script src="/js/bootstrap.min.js"></script>
+
+	<script src="/js/jquery-3.1.1.min.js"></script>
+
+        <script src="/js/angular.js"></script>
+        <script src="/js/angular-animate.js"></script>
+        <script src="/js/angular-sanitize.js"></script>
+        <script src="/js/angular-aria.min.js"></script>
+        <script src="/js/angular-material.min.js"></script>
+        <script src="/js/ui-bootstrap-tpls-2.1.3.js"></script>
+        
+        <script src="/js/app.js"></script>
 
 </body>
 </html>
