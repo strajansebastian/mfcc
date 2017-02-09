@@ -112,43 +112,62 @@
         </tr>
        </table>
     </ng-if>
+
+
+
+
     <ng-if ng-if="currentNavItem == 'productADD'"><h3>Add Product</h3> 
         <div class="form-group form-inline">
           <label for="productAddName">Product Name:</label>
-          <input type="text" class="form-control" id="productAddName" placeholder="insert product name...">
+          <input ng-model="productAdd.name" type="text" class="form-control" id="productAddName" placeholder="insert product name...">
         </div>
         <div class="form-group form-inline">
           <label for="productAddCategory">Product Category:</label>
-          <input type="text" class="form-control" id="productAddCategory" placeholder="insert product category...">
+          <input ng-model="productAdd.category" type="text" class="form-control" id="productAddCategory" placeholder="insert product category...">
         </div>
         <div class="form-group form-inline">
           <label for="productAddAttributes">Product Attributes:</label>
-          <input type="text" class="form-control" id="productAddAttributes" placeholder="insert product attributes as json...">
+          <input ng-model="productAdd.attributes" type="text" class="form-control" id="productAddAttributes" placeholder="insert product attributes as json...">
         </div>
-        <button type="submit" class="btn btn-success" ng-click="addProduct()" >Add Product</button>
+        <button type="submit" class="btn btn-success" ng-click="addProduct(productAdd.name, productAdd.category, productAdd.attributes)" >Add Product</button>
     </ng-if>
+
+
+
+
+
+
     <ng-if ng-if="currentNavItem == 'productUPD'"><h3>Update Product</h3> 
         <div class="form-group form-inline">
           <label for="productUpdateID">Product ID:</label>
-          <input type="text" class="form-control" id="productUpdateID" placeholder="insert product id...">
+          <input ng-model="productUpdate.id" type="text" class="form-control" id="productUpdateID" placeholder="insert product id...">
         </div>
         <div class="form-group form-inline">
           <label for="productUpdateCategory">Product Category:</label>
-          <input type="text" class="form-control" id="productUpdateCategory" placeholder="insert product category...">
+          <input ng-model="productUpdate.category" type="text" class="form-control" id="productUpdateCategory" placeholder="insert product category...">
         </div>
         <div class="form-group form-inline">
           <label for="productUpdateAttributes">Product Attributes:</label>
-          <input type="text" class="form-control" id="productUpdateAttributes" placeholder="insert product attributes as json...">
+          <input ng-model="productUpdate.attributes" type="text" class="form-control" id="productUpdateAttributes" placeholder="insert product attributes as json...">
         </div>
-        <button type="submit" class="btn btn-success" ng-click="updateProduct()" >Update Product</button>
+        <button type="submit" class="btn btn-success" ng-click="updateProduct(productUpdate.id, productUpdate.category, productUpdate.attributes)" >Update Product</button>
     </ng-if>
+
+
+
+
+
+
     <ng-if ng-if="currentNavItem == 'productDEL'"><h3>Delete Product</h3> 
         <div class="form-group form-inline">
-          <label for="productDeleteID">Product ID:</label>
+          <label ng-model="productDelete.id" for="productDeleteID">Product ID:</label>
           <input type="text" class="form-control" id="productDeleteID" placeholder="insert product id...">
         </div>
-        <button type="submit" class="btn btn-success" ng-click="deleteProduct()" >Delete Product</button>
+        <button type="submit" class="btn btn-success" ng-click="deleteProduct(productDelete.id)" >Delete Product</button>
     </ng-if>
+
+
+
 
     </div>
 

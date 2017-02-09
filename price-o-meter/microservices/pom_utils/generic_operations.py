@@ -38,7 +38,8 @@ def update(query, bind_variables):
       cursor.close()
       connection.commit()
       status = True
-    except:
+    except Exception as e: 
+      print str(e)
       status = False
 
     connection.close()
@@ -53,7 +54,8 @@ def insert(query, bind_variables):
       cursor.close()
       connection.commit()
       status = True
-    except:
+    except Exception as e: 
+      print str(e)
       status = False
 
     connection.close()
@@ -68,7 +70,8 @@ def delete(query, bind_variables):
       cursor.close()
       connection.commit()
       status = True
-    except:
+    except Exception as e: 
+      print str(e)
       status = False
 
     connection.close()

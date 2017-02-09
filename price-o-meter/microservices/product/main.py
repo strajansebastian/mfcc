@@ -14,6 +14,7 @@ app = Flask(__name__)
 connection = None
 hostname = 'localhost'
 username = 'price_o_meter'
+# haha password in plain text - need to provide some sort of configuration to avoid this shit
 password = 'use_FUAR-10Cl'
 database = 'price_o_meter'
 
@@ -42,8 +43,8 @@ def crossdomain(origin=None, methods=None, headers=None,
                 resp = current_app.make_default_options_response()
             else:
                 resp = make_response(f(*args, **kwargs))
-            if not attach_to_all and request.method != 'OPTIONS':
-                return resp
+            # if not attach_to_all and request.method != 'OPTIONS':
+            #     return resp
 
             h = resp.headers
 
@@ -82,19 +83,19 @@ def get_product():
 
     return json.dumps(result, default=date_handler)
 
-@app.route("/product", methods=['POST'])
+@app.route("/product_update", methods=['GET', 'POST'])
 @crossdomain(origin='*')
 def post_product():
     product_id = request.args.get('id')
     category = request.args.get('category')
-    attributes = request.args.get('attributes')
+    # attributes = request.args.get('attributes')
     
     query = "UPDATE products SET category = %s, attributes=%s WHERE id = %s"
     result = pom_go.update(query, (category, attributes, product_id))
 
     return "{'updated':'%s'}" % (result)
 
-@app.route("/product", methods=['PUT'])
+@app.route("/product_insert", methods=['GET', 'PUT', 'OPTIONS'])
 @crossdomain(origin='*')
 def put_product():
     name = request.args.get('name')
@@ -106,7 +107,7 @@ def put_product():
 
     return "{'inserted': '%s', 'product': '%s'}" % (result, name)
 
-@app.route("/product", methods=['DELETE'])
+@app.route("/product_delete", methods=['GET', 'DELETE'])
 @crossdomain(origin='*')
 def delete_product():
     product_id = request.args.get('id')
