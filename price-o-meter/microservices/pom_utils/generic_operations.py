@@ -1,13 +1,19 @@
 # this functions are wrappers that will write operations to other tables in order to control concurrency and locking problems
+import psycopg2
+
 
 hostname = 'localhost'
 username = 'price_o_meter'
 password = 'use_FUAR-10Cl'
 database = 'price_o_meter'
 
-def select(connection, query):
-    import psycopg2
+def init_connection():
     connection = psycopg2.connect( host=hostname, user=username, password=password, dbname=database )
+
+    return connection 
+
+def select(query):
+    connection = init_connection()
     cursor = connection.cursor()
     cursor.execute(query)
    
@@ -19,29 +25,53 @@ def select(connection, query):
       tmp_row = dict(zip(columns, row))
       result.append(tmp_row)
 
+    cursor.close()
+    connection.close()
+
     return result
 
-def update(connection, query):
-    print "A update was made"
+def update(query, bind_variables):
+    connection = init_connection()
+    cursor = connection.cursor()
+    try:
+      cursor.execute(query, bind_variables)
+      cursor.close()
+      connection.commit()
+      status = True
+    except:
+      status = False
 
-def insert(connection, query):
-    print "A insert was made"
+    connection.close()
 
-def delete(connection, query):
-    print "A delete was made"
+    return status
 
-### # Simple routine to run a query on a database and print the results:
-### def doQuery( conn ) :
-###     cur = conn.cursor()
-### 
-###     cur.execute( "SELECT fname, lname FROM employee" )
-### 
-###     for firstname, lastname in cur.fetchall() :
-###         print firstname, lastname
-### 
-### 
-### print "Using psycopg2"
-### import psycopg2
-### myConnection = psycopg2.connect( host=hostname, user=username, password=password, dbname=database )
-### doQuery( myConnection )
-### myConnection.close()
+def insert(query, bind_variables):
+    connection = init_connection()
+    cursor = connection.cursor()
+    try:
+      cursor.execute(query, bind_variables)
+      cursor.close()
+      connection.commit()
+      status = True
+    except:
+      status = False
+
+    connection.close()
+
+    return status
+
+def delete(query, bind_variables):
+    connection = init_connection()
+    cursor = connection.cursor()
+    try:
+      cursor.execute(query, bind_variables)
+      cursor.close()
+      connection.commit()
+      status = True
+    except:
+      status = False
+
+    connection.close()
+
+    return status
+

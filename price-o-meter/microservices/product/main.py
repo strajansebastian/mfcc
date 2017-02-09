@@ -1,6 +1,7 @@
 import json
 
 from flask import Flask
+from flask import request
 
 import pom_utils.generic_operations as pom_go
 
@@ -9,6 +10,12 @@ from flask import make_response, request, current_app
 from functools import update_wrapper
 
 app = Flask(__name__)
+
+connection = None
+hostname = 'localhost'
+username = 'price_o_meter'
+password = 'use_FUAR-10Cl'
+database = 'price_o_meter'
 
 def crossdomain(origin=None, methods=None, headers=None,
                 max_age=21600, attach_to_all=True,
@@ -63,59 +70,92 @@ def date_handler(obj):
 @crossdomain(origin='*')
 def get_products():
     query = "SELECT id,name,category,date_added,date_updated,date_removed,attributes FROM products"
-    result = pom_go.select("", query)
+    result = pom_go.select(query)
     
     return json.dumps(result, default=date_handler)
 
 @app.route("/product", methods=['GET'])
+@crossdomain(origin='*')
 def get_product():
-    return "RETURN product"
+    query = "SELECT id,name,category,date_added,date_updated,date_removed,attributes FROM products WHERE id = %s" % (1)
+    result = pom_go.select(query)
+
+    return json.dumps(result, default=date_handler)
 
 @app.route("/product", methods=['POST'])
+@crossdomain(origin='*')
 def post_product():
-    return "UPDATE product"
+    product_id = request.args.get('id')
+    category = request.args.get('category')
+    attributes = request.args.get('attributes')
+    
+    query = "UPDATE products SET category = %s, attributes=%s WHERE id = %s"
+    result = pom_go.update(query, (category, attributes, product_id))
+
+    return "{'updated':'%s'}" % (result)
 
 @app.route("/product", methods=['PUT'])
+@crossdomain(origin='*')
 def put_product():
-    return "ADD product"
+    name = request.args.get('name')
+    category = request.args.get('category')
+    attributes = request.args.get('attributes')
+
+    query = "INSERT INTO products(name, category, date_added, attributes) VALUES(%s,%s,now(),%s)"
+    result = pom_go.insert(query, (name, category, attributes))
+
+    return "{'inserted': '%s', 'product': '%s'}" % (result, name)
 
 @app.route("/product", methods=['DELETE'])
+@crossdomain(origin='*')
 def delete_product():
-    return "DELETE product"
+    product_id = request.args.get('id')
+    
+    query = "DELETE FROM products WHERE id = %s"
+    result = pom_go.update(query, (product_id))
 
+    return "{'deleted':'%s'}" % (result)
 
 # product location section
 @app.route("/product_locations", methods=['GET'])
+@crossdomain(origin='*')
 def get_product_locations():
     return "GET product locations"
 
 @app.route("/product_location", methods=['GET'])
+@crossdomain(origin='*')
 def get_product_location():
     return "GET product location"
 
 @app.route("/product_location", methods=['POST'])
+@crossdomain(origin='*')
 def post_product_location():
     return "POST product location"
 
 @app.route("/product_location", methods=['PUT'])
+@crossdomain(origin='*')
 def put_product_location():
     return "PUT product location"
 
 @app.route("/product_location", methods=['DELETE'])
+@crossdomain(origin='*')
 def delete_product_location():
     return "DELETE product location"
 
 
 # product prices location
 @app.route("/product_prices", methods=['GET'])
+@crossdomain(origin='*')
 def get_product_prices():
     return "GET product prices"
 
 @app.route("/product_price", methods=['GET'])
+@crossdomain(origin='*')
 def get_product_price():
     return "GET product price"
 
 @app.route("/product_price", methods=['PUT'])
+@crossdomain(origin='*')
 def put_product_price():
     return "PUT product price"
 

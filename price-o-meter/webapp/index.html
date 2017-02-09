@@ -24,8 +24,8 @@
     </div>
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li><a href="#">Products</a></li>
-        <li><a href="#">Discounts</a></li>
+        <li><a href="index.html">Products</a></li>
+        <li><a href="prices.html">Prices</a></li>
       </ul>
 <!--
       <form class="navbar-form navbar-left">
@@ -37,7 +37,7 @@
 -->
       <ul class="nav navbar-nav navbar-right">
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin<span class="caret"></span></a>
+          <a href="admin.html" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin<span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="#">Add site for product</a></li>
             <li><a href="#">Update site for product</a></li>
@@ -62,32 +62,92 @@
     </md-nav-bar>
     <div class="ext-content">
     <ng-if ng-if="currentNavItem == 'productLST'"><h3>List Products</h3>
-    <table class="table">
-           <tr>
-              <td>ID</td>
-              <td>Name</td>
-              <td>Category</td>
-              <td>Date Added</td>
-              <td>Date Updated</td>
-              <td>Date Removed</td>
-           </tr>
-           <tr ng-repeat="product in products | orderBy:'name'">
-                       <td>{{product.id}}</td>
-                       <td>{{product.name}}</td>
-                       <td>{{product.category}}</td>
-                       <td>{{product.date_added}}</td>
-                       <td>{{product.date_modified || 'Item not modified'}}</td>
-                       <td>{{product.date_removed || 'Item not removed'}}</td>
-           </tr>
-        </table>
+      <table class="table">
+        <tr>
+           <th ng-repeat="product_cols in products_columns">{{product_cols}}</th>
+        </tr>
+        <tr ng-repeat="product in products | orderBy:'name'">
+           <td>{{product.id}}</td>
+           <td>{{product.name}}</td>
+           <td>{{product.category}}</td>
+           <td>{{product.date_added}}</td>
+           <td>{{product.date_modified || 'Item not modified'}}</td>
+           <td>{{product.date_removed || 'Item not removed'}}</td>
+        </tr>
+      </table>
     </ng-if>
-    <ng-if ng-if="currentNavItem == 'productSHW'"><h3>Show Product</h3> 
+    <ng-if ng-if="currentNavItem == 'productSHW'"><h3>Show Product</h3>
+       <table class="table">
+         <tr>
+           <td><input type="text" class="form-control" placeholder="Insert ID" ng-model="product_current_id"></td>
+           <td><button type="submit" class="btn btn-success" ng-click="getProduct(product_current_id)" >show product info</button></td>
+        </tr>
+        <tr>
+           <th>ID</th>
+           <td>{{product_current.id || 'No ID selected'}}</td>
+        </tr>
+        <tr>
+           <th>Name</th>
+           <td>{{product_current.name || 'Name undefined'}}</td>
+        </tr>
+        <tr>
+           <th>Category</th>
+           <td>{{product_current.category || 'Category undefined' }}</td>
+        </tr>
+        <tr>
+           <th>Date Added</th>
+           <td>{{product_current.date_added || 'Date Added undefined'}}</td>
+        </tr>
+        <tr>
+           <th>Date Modified</th>
+           <td>{{product_current.date_modified || 'Item not modified'}}</td>
+        </tr>
+        <tr>
+           <th>Date Removed</th>
+           <td>{{product_current.date_removed || 'Item not removed'}}</td>
+        </tr>
+        <tr>
+           <th>Attributes</th>
+           <td>{{product_current.attributes || 'No extra details are available'}}</td>
+        </tr>
+       </table>
     </ng-if>
     <ng-if ng-if="currentNavItem == 'productADD'"><h3>Add Product</h3> 
+        <div class="form-group form-inline">
+          <label for="productAddName">Product Name:</label>
+          <input type="text" class="form-control" id="productAddName" placeholder="insert product name...">
+        </div>
+        <div class="form-group form-inline">
+          <label for="productAddCategory">Product Category:</label>
+          <input type="text" class="form-control" id="productAddCategory" placeholder="insert product category...">
+        </div>
+        <div class="form-group form-inline">
+          <label for="productAddAttributes">Product Attributes:</label>
+          <input type="text" class="form-control" id="productAddAttributes" placeholder="insert product attributes as json...">
+        </div>
+        <button type="submit" class="btn btn-success" ng-click="addProduct()" >Add Product</button>
     </ng-if>
     <ng-if ng-if="currentNavItem == 'productUPD'"><h3>Update Product</h3> 
+        <div class="form-group form-inline">
+          <label for="productUpdateID">Product ID:</label>
+          <input type="text" class="form-control" id="productUpdateID" placeholder="insert product id...">
+        </div>
+        <div class="form-group form-inline">
+          <label for="productUpdateCategory">Product Category:</label>
+          <input type="text" class="form-control" id="productUpdateCategory" placeholder="insert product category...">
+        </div>
+        <div class="form-group form-inline">
+          <label for="productUpdateAttributes">Product Attributes:</label>
+          <input type="text" class="form-control" id="productUpdateAttributes" placeholder="insert product attributes as json...">
+        </div>
+        <button type="submit" class="btn btn-success" ng-click="updateProduct()" >Update Product</button>
     </ng-if>
     <ng-if ng-if="currentNavItem == 'productDEL'"><h3>Delete Product</h3> 
+        <div class="form-group form-inline">
+          <label for="productDeleteID">Product ID:</label>
+          <input type="text" class="form-control" id="productDeleteID" placeholder="insert product id...">
+        </div>
+        <button type="submit" class="btn btn-success" ng-click="deleteProduct()" >Delete Product</button>
     </ng-if>
 
     </div>
