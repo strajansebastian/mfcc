@@ -23,10 +23,10 @@ CREATE TABLE IF NOT EXISTS prices (
 	id SERIAL PRIMARY KEY,
 	product_id INTEGER NOT NULL,
 	product_location_id INTEGER NOT NULL,
-	price INTEGER NOT NULL,
-	price_currecy VARCHAR(30) NOT NULL,
+	price NUMERIC NOT NULL,
+	price_currency VARCHAR(30) NOT NULL,
 	date_added TIMESTAMP NOT NULL,
-	CONSTRAINT uniq_prices UNIQUE(product_id, date_added),
+	CONSTRAINT uniq_prices UNIQUE(product_id, product_location_id, date_added),
 	CONSTRAINT fk_producti_id FOREIGN KEY (product_id) REFERENCES products (id),
 	CONSTRAINT fk_producti_location_id FOREIGN KEY (product_location_id) REFERENCES product_locations (id)
 );
