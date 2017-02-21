@@ -57,14 +57,15 @@
     <md-nav-bar md-selected-nav-item="current_nav_item" nav-bar-aria-label="navigation links">
       <md-nav-item md-nav-click="goto('productLocationLST')" name="productLocationLST">List</md-nav-item>
       <md-nav-item md-nav-click="goto('productLocationADD')" name="productLocationADD">Add</md-nav-item>
+      <md-nav-item md-nav-click="goto('productLocationDEL')" name="productLocationDEL">Delete</md-nav-item>
     </md-nav-bar>
     <div class="ext-content">
-    <ng-if ng-if="currentNavItem == 'productLocationLST'"><h3>List Locations for Products</h3>
+    <ng-if ng-if="current_nav_item == 'productLocationLST'"><h3>List Locations for Products</h3>
       <table class="table">
         <tr>
-           <th ng-repeat="prod_loc_cols in product_locations_columns">{{prod_loc_cols}}</th>
+           <th ng-repeat="item in product_locations_columns">{{item}}</th>
         </tr>
-<!--
+
         <tr ng-repeat="prod_loc in product_locations | orderBy:'name'" id="tr_id_{{prod_loc.id}}">
            <td>{{prod_loc.product_id}}</td>
            <td>{{prod_loc.id}}</td>
@@ -73,26 +74,35 @@
            <td><a href="{{prod_loc.site_name}}{{prod_loc.site_url}}">LINK</a></td>
            <td>{{prod_loc.date_added}}</td>
            <td>{{prod_loc.date_removed || 'Item not removed'}}</td>
--->
         </tr>
+
       </table>
     </ng-if>
 
-    <ng-if ng-if="currentNavItem == 'productLocationADD'"><h3>Add Product Location</h3> 
-        <p>{{productInsert.result || 'No rows have been added!'}}</p>
+    <ng-if ng-if="current_nav_item == 'productLocationADD'"><h3>Add Product Location</h3> 
+        <p>{{productLocationInsert.result || 'No rows have been added!'}}</p>
         <div class="form-group form-inline">
-          <label for="productAddName">Product Name:</label>
-          <input ng-model="productInsert.name" type="text" class="form-control" id="productAddName" placeholder="insert product name...">
+          <label for="productLocationAddProductID">Product ID:</label>
+          <input ng-model="productLocationInsert.product_id" id="productLocationAddProductID" type="text" class="form-control" placeholder="insert product name...">
         </div>
         <div class="form-group form-inline">
-          <label for="productAddCategory">Product Category:</label>
-          <input ng-model="productInsert.category" type="text" class="form-control" id="productAddCategory" placeholder="insert product category...">
+          <label for="productLocationAddSiteName">Site Name:</label>
+          <input ng-model="productLocationInsert.site_name" id="productLocationAddSiteName" type="text" class="form-control" placeholder="add site name...">
         </div>
         <div class="form-group form-inline">
-          <label for="productAddAttributes">Product Attributes:</label>
-          <input ng-model="productInsert.attributes" type="text" class="form-control" id="productAddAttributes" placeholder="insert product attributes as json...">
+          <label for="productLocationAddSiteURL">Site URL:</label>
+          <input ng-model="productLocationInsert.site_url" id="productLocationAddSiteURL" type="text" class="form-control" placeholder="add site URL...">
         </div>
-        <button type="submit" class="btn btn-success" ng-click="insertProduct(productInsert.name, productInsert.category, productInsert.attributes)" >Add Product</button>
+        <button type="submit" class="btn btn-success" ng-click="insertProductLocation(productLocationInsert.product_id, productLocationInsert.site_name, productLocationInsert.site_url)" >Add Product Location</button>
+    </ng-if>
+
+    <ng-if ng-if="current_nav_item == 'productLocationDEL'"><h3>Delete Product Location</h3>
+        <p>{{productLocationDelete.result || 'No rows have been deleted!'}}</p>
+        <div class="form-group form-inline">
+          <label for="productLocationDeleteID">Product Location ID:</label>
+          <input ng-model="productLocationDelete.id" type="number" class="form-control" id="productLocationDeleteID" placeholder="insert product location id...">
+        </div>
+        <button type="submit" class="btn btn-success" ng-click="deleteProductLocation(productLocationDelete.id)" >Delete Product Location</button>
     </ng-if>
 
 

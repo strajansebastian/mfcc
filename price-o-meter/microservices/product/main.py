@@ -144,6 +144,12 @@ def get_product_location():
 # def post_product_location():
 #     return "POST product location"
 
+# useless crap because option is called for some methods by the browser/ng framework
+@app.route("/product_location", methods=['OPTIONS'])
+@crossdomain(origin='*')
+def options_product_location():
+    return None
+
 @app.route("/product_location", methods=['PUT'])
 @crossdomain(origin='*')
 def put_product_location():
@@ -154,13 +160,18 @@ def put_product_location():
     query = "INSERT INTO product_locations(product_id, site_name, site_url, date_added) VALUES(%s,%s,%s,now())"
     (irs, irn) = pom_go.insert(query, (product_id, site_name, site_url,))
 
-    return jsonify('{"inserted_status": "%s", "product": "%s", "inserted_row_number": "%s"}' % (irs, name, irn))
+    return jsonify('{"inserted_status": "%s", "product_id": "%s", "inserted_row_number": "%s"}' % (irs, product_id, irn))
 
-# @app.route("/product_location", methods=['DELETE'])
-# @crossdomain(origin='*')
-# def delete_product_location():
-#     return "DELETE product location"
-# 
+@app.route("/product_location", methods=['DELETE'])
+@crossdomain(origin='*')
+def delete_product_location():
+    product_location_id = request.args.get('id')
+
+    query = "DELETE FROM product_locations WHERE id = %s"
+    (drs, drn) = pom_go.delete(query, (product_location_id,))
+
+    return jsonify('{"deleted_status":"%s", "deleted_row_number": "%s"}' % (drs, drn))
+
 
 @app.route("/product_price", methods=['GET'])
 @crossdomain(origin='*')
