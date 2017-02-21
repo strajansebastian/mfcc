@@ -16,12 +16,53 @@ app.service('http', ['$http', '$q', function($http, $q) {
       return deferred.promise;
     };
 
-    this.put = function(url, data){
+    this.put = function(url, data, config){
       var deferred = $q.defer();
 
       $http({
         method : "PUT",
         url : url,
+        headers: {
+          'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
+        },
+        data : data
+      }).then(function mySucces(response) {
+          deferred.resolve(response.data);
+      }, function myError(response) {
+          deferred.reject(response.statusText);
+      });
+
+      return deferred.promise;
+    };
+
+    this.post = function(url, data, config){
+      var deferred = $q.defer();
+
+      $http({
+        method : "POST",
+        url : url,
+        headers: {
+          'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
+        },
+        data : data
+      }).then(function mySucces(response) {
+          deferred.resolve(response.data);
+      }, function myError(response) {
+          deferred.reject(response.statusText);
+      });
+
+      return deferred.promise;
+    };
+
+    this.delete = function(url, data, config){
+      var deferred = $q.defer();
+
+      $http({
+        method : "DELETE",
+        url : url,
+        headers: {
+          'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
+        },
         data : data
       }).then(function mySucces(response) {
           deferred.resolve(response.data);
@@ -33,73 +74,161 @@ app.service('http', ['$http', '$q', function($http, $q) {
     };
 }]);
 
-app.controller('PriceOMeterController',['$scope', 'http', function($scope, http) {
+
+
+
+app.controller('PriceOMeterController', ['$scope', 'http', '$timeout', function($scope, http, $timeout) {
+  $scope.currentNavItem = 'productLST';
+
   $scope.products_columns = ['ID', 'Name', 'Category', 'Date Added', 'Date Updated', 'Date Removed'];
   $scope.products = [];
   $scope.product_current_columns = $scope.products_columns.concat(["Attributes"]);
   $scope.product_current;
   $scope.product_current_id = -1;
+  $scope.edit_button_status = "disabled";
+  $scope.edit_button_text = "NanA!";
 
-  $scope.productAdd = {
-    'name': undefined,
-    'category': undefined,
-    'attributes': "{}"
-  }
+  var vm = this;
+  vm.product_current_id = $scope.product_current_id;
+  vm.product_current = $scope.product_current;
+
+  $scope.productInsert = {
+    'name': null,
+    'category': null,
+    'attributes': "{}",
+    'result': null
+  };
 
   $scope.productUpdate = {
-    'id': undefined,
-    'category': undefined,
-    'attributes': "{}"
-  }
+    'id': -1,
+    'category': null,
+    'attributes': "{}",
+    'result': null
+  };
 
   $scope.productDelete = {
-    'id': undefined
-  }
+    'id': null,
+    'result': null
+  };
 
   $scope.prices = [];
 
-  $scope.currentNavItem = 'productLST';
-
-  $scope.getProduct = function(product_id) {
+  $scope.getProduct = function() {
+    console.log('get_Product ', $scope.productUpdate.id);
+    var fin_result = "The provided ID (" + $scope.productUpdate.id + ") is not available! Please try another one!";
     for (var index in $scope.products) {
       product = $scope.products[index];
-      if (product.id == product_id) {
+      if (product.id == $scope.productUpdate.id) {
         $scope.product_current = product;
+        $scope.productUpdate.id = product.id;
+        $scope.productUpdate.cateogry = product.category;
+        $scope.productUpdate.attributes = product.attributes;
+        $scope.edit_button_status = false;
+        $scope.edit_button_text = "update product info";
+        fin_result = "Found product with ID="  + $scope.productUpdate.id + "! Proceed with update process!";
       }
     }
+    $scope.productUpdate.result = fin_result;
   };
 
-  $scope.addProduct = function(product_name, product_category, product_attributes) {
-    var url = "http://price-o-meter.local:5000/product_add?";
-    url = url + "name=" + product_name + "&"
-    url = url + "category=" + product_category + "&"
-    // url = url + "attributes=" + product_attributes 
-    var put_data = {
-      'name': product_name,
-      'category': product_category,
-      'attributes': product_attributes
-    };
+  $scope.insertProduct = function(product_name, product_category, product_attributes) {
+    var url = "http://price-o-meter.local:5000/product?";
+    url = url + "name=" + product_name + "&";
+    url = url + "category=" + product_category + "&";
+    url = url + "attributes=" + product_attributes;
 
-    http.get(url).then(function(data){
-      for(var prop in data){
-        console.log("works:", data[prop]);
-      }
+    http.put(url, {}).then(function(data) {
+      var json_data = JSON.parse(data);
+      $scope.productInsert.result = "The status of the add operation for product='" + product_name + "' is '" + json_data['inserted_status'] + "'. The operation affected " + json_data['inserted_row_number'] + " row(s)!";
     });
-    console.log("add", product_name, product_category, product_attributes);
   };
 
-  $scope.updateProduct = function(product_id, product_category, product_attributes) {
-    console.log("update", product_id, product_category, product_attributes);
+  $scope.showProduct = function() {
+    console.log("show", vm.product_current_id);
+  };
+
+  $scope.updateProduct = function() {
+    var product_id = $scope.productUpdate.id;
+    var product_category = $scope.productUpdate.category;
+    var product_attributes = $scope.productUpdate.attributes;
+
+    // find a way to serialize this SHIT, or post it in another way
+    product_attributes = "{}";
+
+    var url = "http://price-o-meter.local:5000/product?";
+    url = url + "id=" + product_id + "&";
+    url = url + "category=" + product_category + "&";
+    url = url + "attributes=" + product_attributes;
+
+    http.post(url, {}).then(function(data){
+      var json_data = JSON.parse(data);
+      $scope.productUpdate.result = "The status of the update operation for product ID='" + product_id + "' is '" + json_data['updated_status'] + "'. The operation affected " + json_data['updated_row_number'] + " row(s)!";
+    });
   };
 
   $scope.deleteProduct = function(product_id) {
-    console.log("delete", product_id);
+    var url = "http://price-o-meter.local:5000/product?id=" + product_id;
+
+    http.delete(url, {}).then(function(data){
+      var json_data = JSON.parse(data);
+      $scope.productDelete.result = "The status of the delete operation for product with id=" + product_id + " is '" + json_data['deleted_status'] + "'. The operation affected " + json_data['deleted_row_number'] + " row(s)!";
+    });
   };
 
-  http.get("http://price-o-meter.local:5000/products").then(function(data){
+  http.get("http://price-o-meter.local:5000/product").then(function(data){
     for(var prop in data){
       $scope.products.push(data[prop]);
     }
   });
 
 }]);
+
+app.controller('PriceOMeterPricesController', ['$scope', 'http', function($scope, http, $timeout) {
+  http.get("http://price-o-meter.local:5000/product_price").then(function(data){
+    console.log(data);
+  });
+}]);
+
+
+
+app.controller('PriceOMeterProductLocationController', ['$scope', 'http', '$timeout', function($scope, http, $timeout) {
+  $scope.current_nav_item = 'productLocationLST';
+
+  $scope.product_locations_columns = ['Product ID', 'Product Location ID', 'Site Name', 'Site URL', 'Site Full URL', 'Date Added', 'Date Removed'];
+  $scope.product_locations = [];
+
+  $scope.productInsert = {
+    'product_id': null,
+    'product_location_id': null,
+    'site_name': null,
+    'site_url': null,
+    'result': null
+  };
+
+  $scope.insertProduct = function(product_name, product_category, product_attributes) {
+    var url = "http://price-o-meter.local:5000/product_location?";
+    url = url + "name=" + product_name + "&";
+    url = url + "category=" + product_category + "&";
+    url = url + "attributes=" + product_attributes;
+
+    http.put(url, {}).then(function(data) {
+      var json_data = JSON.parse(data);
+      $scope.productInsert.result = "Status of add operation is: " + json_data['inserted_status'] + "'. The operation affected " + json_data['inserted_row_number'] + " row(s)!";
+    });
+  };
+
+  http.get("http://price-o-meter.local:5000/product_location").then(function(data){
+    for(var prop in data){
+      $scope.product_locations.push(data[prop]);
+    }
+    console.log($scope.product_locations);
+  });
+
+}]);
+
+
+
+
+
+
+
