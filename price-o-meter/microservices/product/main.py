@@ -197,7 +197,7 @@ def put_product_price():
     query = "INSERT INTO prices(product_id, product_location_id, price, price_currency, date_added) VALUES(%s,%s,%s,%s,now())"
     (irs, irn) = pom_go.insert(query, (product_id, product_location_id, price, price_currency,))
 
-    return jsonify('{"inserted_status": "%s", "product": "%s", "inserted_row_number": "%s"}' % (irs, name, irn))
+    return jsonify('{"inserted_status": "%s", "product_id": "%s", "inserted_row_number": "%s"}' % (irs, product_id, irn))
 
 
 if __name__ == "__main__":
